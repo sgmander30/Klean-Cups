@@ -52,6 +52,23 @@ window.SITE = {
       image: "https://www.sciencenews.org/wp-content/uploads/sites/2/2024/03/031824_MR_microplastics_feat.jpg" }
   ],
 
+  // "What it's made of" on every product page. Draft spec: confirm with the co-packer before launch.
+  materials: [
+    { part: "Lid", material: "Uncoated paper lid", detail: "Sealed to the cup with a plant-starch adhesive. No foil and no plastic laminate." },
+    { part: "Filter", material: "Unbleached plant-fiber paper", detail: "Wood pulp and abaca (banana-plant) fiber, with no plastic fibers to heat-seal it." },
+    { part: "Cup", material: "Molded plant fiber", detail: "Pressed from bamboo and sugarcane pulp. No plastic lining and no PFAS \"forever chemical\" coatings." },
+    { part: "Coffee", material: "100% arabica", detail: "Ground fresh and packed with nothing added." },
+    { part: "Box", material: "Recycled paperboard", detail: "Printed with plant-based inks. Recycle it with your paper." }
+  ],
+  materialsNote: "No plastic of any kind, and that includes \"plant-based\" bioplastics like PLA. PLA is still plastic, so it isn't in our pods.",
+  // Shown as "in progress" until each one is actually awarded.
+  certifications: [
+    { name: "Plastic Free Certification", by: "Control Union", status: "In progress" },
+    { name: "PFAS-free lab testing", by: "Independent third-party lab", status: "In progress" },
+    { name: "OK compost HOME", by: "TÜV Austria", status: "In progress" },
+    { name: "FSC-certified paperboard", by: "Forest Stewardship Council", status: "In progress" }
+  ],
+
   products: [
     {
       id: "dark", packshot: "assets/img/packshot-dark.jpg", name: "Dark Roast", color: "#C8242A", intensity: 4,

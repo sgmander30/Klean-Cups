@@ -194,6 +194,42 @@
       "</div>";
   }
 
+  // ---------- what it's made of ----------
+  function podDiagram() {
+    // Exploded pod: 1 lid, 2 filter, 3 cup. Numbers match the parts list.
+    return '<svg class="pod-diagram" viewBox="0 0 220 300" role="img" aria-label="Exploded view of the pod: lid, filter and cup">' +
+      '<ellipse cx="110" cy="40" rx="62" ry="14" fill="#F6EFE3" stroke="#C8242A" stroke-width="2"/>' +
+      '<ellipse cx="110" cy="40" rx="50" ry="10" fill="none" stroke="#C8242A" stroke-width="1"/>' +
+      '<path d="M66 92 Q110 84 154 92 L130 168 Q110 176 90 168 Z" fill="#EADCC3" stroke="#8A7A66" stroke-width="1.5"/>' +
+      '<path d="M76 104 Q110 98 144 104 M84 128 Q110 123 136 128 M92 150 Q110 146 128 150" fill="none" stroke="#B8A68C" stroke-width="1"/>' +
+      '<path d="M52 200 L168 200 L154 286 Q110 296 66 286 Z" fill="#E3D6C2" stroke="#8A7A66" stroke-width="1.5"/>' +
+      '<ellipse cx="110" cy="200" rx="58" ry="12" fill="#D5C4AA" stroke="#8A7A66" stroke-width="1.5"/>' +
+      '<g font-family="Oswald, Arial Narrow, sans-serif" font-size="14" font-weight="600" text-anchor="middle">' +
+        '<circle cx="196" cy="40" r="12" fill="#C8242A"/><text x="196" y="45" fill="#fff">1</text>' +
+        '<circle cx="196" cy="128" r="12" fill="#C8242A"/><text x="196" y="133" fill="#fff">2</text>' +
+        '<circle cx="196" cy="244" r="12" fill="#C8242A"/><text x="196" y="249" fill="#fff">3</text>' +
+      "</g>" +
+      '<path d="M174 40 H184 M150 128 H184 M162 244 H184" stroke="#C8242A" stroke-width="1.5"/>' +
+    "</svg>";
+  }
+  function madeOfHTML() {
+    if (!S.materials) return "";
+    return '<section class="made-of" aria-labelledby="made-of-title">' +
+      '<div class="made-of-head"><p class="eyebrow">Every pod, every roast</p><h2 id="made-of-title">What it\'s made of</h2>' +
+        '<p class="made-of-note">' + esc(S.materialsNote) + "</p></div>" +
+      '<div class="made-of-body">' + podDiagram() +
+        '<ol class="parts">' + S.materials.map(function (m, i) {
+          return '<li' + (i > 2 ? ' class="extra"' : "") + '><span class="part-name">' + esc(m.part) + "</span>" +
+            '<span class="part-mat">' + esc(m.material) + "</span><span class=\"part-detail\">" + esc(m.detail) + "</span></li>";
+        }).join("") + "</ol>" +
+      "</div>" +
+      (S.certifications && S.certifications.length ?
+        '<div class="certs"><h3>Certifications we\'re working toward</h3><ul>' + S.certifications.map(function (c) {
+          return '<li><span class="cert-seal" aria-hidden="true"></span><span><b>' + esc(c.name) + "</b><small>" + esc(c.by) + '</small></span><em>' + esc(c.status) + "</em></li>";
+        }).join("") + "</ul></div>" : "") +
+    "</section>";
+  }
+
   // ---------- product page ----------
   function renderProduct(id) {
     var p = product(id);
@@ -228,7 +264,8 @@
           '<button class="btn btn-red grow" type="submit">Add to cart</button>' +
         "</div>" +
         '<ul class="pdp-facts"><li><b>Ingredients</b> Coffee. That\'s it.</li><li><b>Fits</b> Keurig® K-Cup® pod brewers</li><li><b>Plastic</b> None. Not in the pod, lid or filter.</li></ul>' +
-      "</form>";
+      "</form>" +
+      madeOfHTML();
 
     var form = $("#pdp-form"), qty = 1;
     function update() {
