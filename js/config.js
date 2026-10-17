@@ -26,8 +26,8 @@ window.SITE = {
 
   // Pack sizes and prices for the single-roast boxes.
   sizes: [
-    { id: "12", pods: 12, boxes: 1, price: 13.99, label: "1 box" },
-    { id: "36", pods: 36, boxes: 3, price: 37.99, label: "3 boxes" }
+    { id: "12", pods: 12, boxes: 1, price: 25.32, label: "1 box" },
+    { id: "36", pods: 36, boxes: 3, price: 69.84, label: "3 boxes" }
   ],
 
   products: [
@@ -54,7 +54,7 @@ window.SITE = {
       notes: "One box of each roast. 36 pods.",
       blurb: "Can't pick? Get all three roasts and find your house cup.",
       photo: "assets/img/brew.jpg",
-      fixedSize: { id: "36", pods: 36, boxes: 3, price: 37.99, label: "3 boxes, one of each" }
+      fixedSize: { id: "36", pods: 36, boxes: 3, price: 69.84, label: "3 boxes, one of each" }
     }
   ]
 };

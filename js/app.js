@@ -470,24 +470,6 @@
     if (t.hasAttribute("aria-invalid")) t.removeAttribute("aria-invalid");
   });
 
-  // ---------- count-up on the big number ----------
-  function countUp() {
-    var el = $("#count-up");
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
-    var done = false;
-    var io = new IntersectionObserver(function (entries) {
-      if (done || !entries[0].isIntersecting) return;
-      done = true; io.disconnect();
-      var start = performance.now(), target = 13000000;
-      (function tick(now) {
-        var k = Math.min(1, (now - start) / 1400);
-        el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3))).toLocaleString("en-US");
-        if (k < 1) requestAnimationFrame(tick);
-      })(start);
-    }, { threshold: 0.6 });
-    io.observe(el);
-  }
-
   // ---------- init ----------
   $("#state").insertAdjacentHTML("beforeend", STATES.map(function (s) { return '<option value="' + s + '">' + s + "</option>"; }).join(""));
   $("#checkout-form").addEventListener("submit", placeOrder);
@@ -496,5 +478,4 @@
   commit();
   window.addEventListener("hashchange", route);
   route();
-  countUp();
 })();

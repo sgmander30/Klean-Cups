@@ -29,7 +29,7 @@ Change `brandName` in `js/config.js`. It updates the header, footer, boxes, page
 
 ## Placeholders to settle before launch
 
-- Prices ($13.99 per 12-pod box, $37.99 for 36), shipping rates, the 10% subscription discount.
+- Prices ($25.32 per 12-pod box at $2.11/pod, $69.84 for 36 at $1.94/pod), shipping rates, the 10% subscription discount.
 - Tasting notes and intensity for each roast.
 - Material and compatibility copy ("zero plastic in the pod, lid or filter", "fits Keurig K-Cup pod brewers") should match the final pod spec.
 - Payment notice on checkout and the confirmation note both say no card is charged. Edit `paymentNotice` and `confirmationNote` when real payments are added.
