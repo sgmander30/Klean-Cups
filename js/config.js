@@ -61,13 +61,6 @@ window.SITE = {
     { part: "Box", material: "Recycled paperboard", detail: "Printed with plant-based inks. Recycle it with your paper." }
   ],
   materialsNote: "No plastic of any kind, and that includes \"plant-based\" bioplastics like PLA. PLA is still plastic, so it isn't in our pods.",
-  // Shown as "in progress" until each one is actually awarded.
-  certifications: [
-    { name: "Plastic Free Certification", by: "Control Union", status: "In progress" },
-    { name: "PFAS-free lab testing", by: "Independent third-party lab", status: "In progress" },
-    { name: "OK compost HOME", by: "TÜV Austria", status: "In progress" },
-    { name: "FSC-certified paperboard", by: "Forest Stewardship Council", status: "In progress" }
-  ],
 
   products: [
     {
