@@ -378,6 +378,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .news-meta b { color: var(--red); font-weight: 600; margin-right: 4px; }
 .news-title { font: 600 1.08rem/1.3 var(--f-serif); color: var(--ink); }
 .news-go { margin-top: auto; font: 500 0.78rem/1 var(--f-ui); letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); }
+.news-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { .news-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .news-grid { grid-template-columns: minmax(0, 1fr); } }
 .faq { display: flex; flex-direction: column; border-top: 2px solid var(--ink); }
 .faq details { border-bottom: 1px solid var(--line); padding-block: 18px; }

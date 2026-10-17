@@ -86,9 +86,8 @@
     "</article>";
   }
   function renderNews() {
-    var root = $("#news-grid");
-    if (!root || !S.news) return;
-    root.innerHTML = S.news.map(function (n) {
+    if (!S.news) return;
+    var html = S.news.map(function (n) {
       return '<a class="news-card" href="' + esc(n.url) + '" target="_blank" rel="noopener">' +
         '<span class="news-img" data-outlet="' + esc(n.outlet) + '"><img src="' + esc(n.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer"></span>' +
         '<span class="news-meta"><b>' + esc(n.kind) + "</b> " + esc(n.outlet) + " · " + esc(n.date) + "</span>" +
@@ -96,8 +95,9 @@
         '<span class="news-go">Read article ↗</span>' +
       "</a>";
     }).join("");
+    $$("[data-news]").forEach(function (root) { root.innerHTML = html; });
     // If an outlet blocks its preview image, show the outlet name instead of a broken image.
-    $$(".news-img img", root).forEach(function (img) {
+    $$(".news-img img").forEach(function (img) {
       img.addEventListener("error", function () { img.parentNode.classList.add("no-img"); img.remove(); });
     });
   }
