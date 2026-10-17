@@ -64,18 +64,26 @@
   }
 
   // ---------- lineup / menu ----------
+  function priceHTML(n) {
+    var parts = n.toFixed(2).split(".");
+    return '<sup>$</sup>' + parts[0] + "<sup>" + parts[1] + "</sup>";
+  }
+  function cardPrice(p, s) {
+    return '<span class="tile-price">' + priceHTML(s.price) + '</span><span class="tile-perpod">' + fmt(s.price / s.pods) + " per pod</span>";
+  }
+  // Retail-style tile: packshot, brand line, name, size chips, price, Buy now.
   function cardHTML(p) {
-    var from = sizesFor(p)[0];
-    return '<article class="card" style="--roast:' + p.color + '">' +
-      '<a class="card-box" href="#product-' + p.id + '" aria-label="' + esc(p.name) + '">' + boxHTML(p) + "</a>" +
-      '<div class="card-body">' +
-        '<h3><a href="#product-' + p.id + '">' + esc(p.name) + "</a></h3>" +
-        '<p class="card-notes">' + esc(p.notes) + "</p>" +
-        '<div class="card-foot">' +
-          '<span class="price">' + (p.fixedSize ? "" : "From ") + fmt(from.price) + "</span>" +
-          '<button class="btn btn-small" type="button" data-quick="' + p.id + '">Add to cart</button>' +
-        "</div>" +
-      "</div></article>";
+    var sizes = sizesFor(p);
+    return '<article class="tile" data-tile="' + p.id + '" style="--roast:' + p.color + '">' +
+      '<a class="tile-img" href="#product-' + p.id + '"><img src="' + p.packshot + '" alt="' + esc(p.name) + ' box and pod" loading="lazy"></a>' +
+      '<p class="tile-brand">' + esc(S.brandName) + "</p>" +
+      '<h3 class="tile-name"><a href="#product-' + p.id + '">' + esc(p.name) + "</a></h3>" +
+      '<div class="chips" role="group" aria-label="Pack size">' + sizes.map(function (s, i) {
+        return '<button type="button" class="chip' + (i === 0 ? " on" : "") + '" data-chip="' + s.id + '" aria-pressed="' + (i === 0) + '">' + s.pods + " ct.</button>";
+      }).join("") + "</div>" +
+      '<div class="tile-pricing">' + cardPrice(p, sizes[0]) + "</div>" +
+      '<button class="btn-buy" type="button" data-buy="' + p.id + '">Buy now</button>' +
+    "</article>";
   }
   function renderLineups() {
     var singles = S.products.filter(function (p) { return !p.bundle; });
@@ -179,7 +187,7 @@
     root.style.setProperty("--roast", p.color);
     root.innerHTML =
       '<div class="pdp-media">' +
-        '<div class="pdp-box">' + boxHTML(p) + "</div>" +
+        '<div class="pdp-shot"><img src="' + p.packshot + '" alt="' + esc(p.name) + ' box and pod"></div>' +
         '<figure class="pdp-photo frame"><img src="' + p.photo + '" alt="" loading="lazy"></figure>' +
       "</div>" +
       '<form class="pdp-info" id="pdp-form">' +
@@ -442,10 +450,18 @@
 
   // ---------- events ----------
   document.addEventListener("click", function (e) {
-    var q = e.target.closest("[data-quick]");
-    if (q) {
-      var p = product(q.getAttribute("data-quick"));
-      addToCart({ id: p.id, size: sizesFor(p)[0].id, plan: "once", freq: "", qty: 1 });
+    var chip = e.target.closest("[data-chip]");
+    if (chip) {
+      var tile = chip.closest("[data-tile]"), tp = product(tile.getAttribute("data-tile"));
+      $$(".chip", tile).forEach(function (c) { var on = c === chip; c.classList.toggle("on", on); c.setAttribute("aria-pressed", on); });
+      $(".tile-pricing", tile).innerHTML = cardPrice(tp, sizeFor(tp, chip.getAttribute("data-chip")));
+      return;
+    }
+    var buy = e.target.closest("[data-buy]");
+    if (buy) {
+      var bt = buy.closest("[data-tile]"), bp = product(buy.getAttribute("data-buy")), on = $(".chip.on", bt);
+      addToCart({ id: bp.id, size: on ? on.getAttribute("data-chip") : sizesFor(bp)[0].id, plan: "once", freq: "", qty: 1 });
+      location.hash = "#cart";
       return;
     }
     var inc = e.target.closest("[data-inc]"), dec = e.target.closest("[data-dec]"), rm = e.target.closest("[data-remove]");

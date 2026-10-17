@@ -32,25 +32,25 @@ window.SITE = {
 
   products: [
     {
-      id: "dark", name: "Dark Roast", color: "#C8242A", intensity: 4,
+      id: "dark", packshot: "assets/img/packshot-dark.jpg", name: "Dark Roast", color: "#C8242A", intensity: 4,
       notes: "Cocoa, toasted walnut, a little smoke.",
       blurb: "The one that wakes the whole house. Bold and low in acid, built for a big mug and a splash of cream.",
       photo: "assets/img/kpod.jpg"
     },
     {
-      id: "medium", name: "Medium Roast", color: "#1F4FA8", intensity: 3,
+      id: "medium", packshot: "assets/img/packshot-medium.jpg", name: "Medium Roast", color: "#1F4FA8", intensity: 3,
       notes: "Brown sugar, milk chocolate, a clean finish.",
       blurb: "The everyday cup. Smooth enough to drink black, sturdy enough for a second refill.",
       photo: "assets/img/brew.jpg"
     },
     {
-      id: "decaf", name: "Decaf", color: "#1E6B45", intensity: 2,
+      id: "decaf", packshot: "assets/img/packshot-decaf.jpg", name: "Decaf", color: "#1E6B45", intensity: 2,
       notes: "Caramel and cocoa, without the buzz.",
       blurb: "All of the ritual, none of the 9 p.m. regret. Full flavor for the afternoon and after dinner.",
       photo: "assets/img/brew.jpg"
     },
     {
-      id: "sampler", name: "Diner Sampler", color: "#151313", intensity: 0, bundle: ["dark", "medium", "decaf"],
+      id: "sampler", packshot: "assets/img/packshot-sampler.jpg", name: "Diner Sampler", color: "#151313", intensity: 0, bundle: ["dark", "medium", "decaf"],
       notes: "One box of each roast. 36 pods.",
       blurb: "Can't pick? Get all three roasts and find your house cup.",
       photo: "assets/img/brew.jpg",

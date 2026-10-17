@@ -8,7 +8,7 @@ A static storefront (plain HTML, CSS and JavaScript, no build step) with a worki
 - `css/style.css`: all styling
 - `js/config.js`: **the file you edit** (brand name, Formspree endpoint, prices, roasts, shipping)
 - `js/app.js`: cart, product options, checkout and confirmation logic
-- `assets/`: photos and two short muted video loops cut from the Higgsfield footage
+- `assets/`: photos, white-background packshots for each product, the logo (`img/logo.svg`, `img/favicon.svg`) and a short muted video loop
 - `tools/build_preview.py`: rebuilds the one-file preview used for the Claude Artifact
 
 ## Connect Formspree
