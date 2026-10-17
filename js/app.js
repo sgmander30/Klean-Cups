@@ -240,7 +240,7 @@
     root.innerHTML =
       '<div class="pdp-media">' +
         '<div class="pdp-shot"><img src="' + p.packshot + '" alt="' + esc(p.name) + ' box and pod"></div>' +
-        '<figure class="pdp-photo frame"><img src="' + p.photo + '" alt="" loading="lazy"></figure>' +
+        (p.photo ? '<figure class="pdp-photo frame"><img src="' + p.photo + '" alt="" loading="lazy"></figure>' : "") +
       "</div>" +
       '<form class="pdp-info" id="pdp-form">' +
         '<p class="eyebrow">Plastic-free pods · 12 per box</p>' +

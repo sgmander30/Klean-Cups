@@ -72,14 +72,12 @@ window.SITE = {
     {
       id: "medium", packshot: "assets/img/packshot-medium.jpg", name: "Medium Roast", color: "#1F4FA8", intensity: 3,
       notes: "Brown sugar, milk chocolate, a clean finish.",
-      blurb: "The everyday cup. Smooth enough to drink black, sturdy enough for a second refill.",
-      photo: "assets/img/brew.jpg"
+      blurb: "The everyday cup. Smooth enough to drink black, sturdy enough for a second refill."
     },
     {
       id: "decaf", packshot: "assets/img/packshot-decaf.jpg", name: "Decaf", color: "#1E6B45", intensity: 2,
       notes: "Caramel and cocoa, without the buzz.",
-      blurb: "All of the ritual, none of the 9 p.m. regret. Full flavor for the afternoon and after dinner.",
-      photo: "assets/img/brew.jpg"
+      blurb: "All of the ritual, none of the 9 p.m. regret. Full flavor for the afternoon and after dinner."
     },
     {
       id: "sampler", packshot: "assets/img/packshot-sampler.jpg", name: "Diner Sampler", color: "#151313", intensity: 0, bundle: ["dark", "medium", "decaf"],
