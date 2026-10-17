@@ -1,0 +1,35 @@
+# Klean Cups website
+
+A static storefront (plain HTML, CSS and JavaScript, no build step) with a working purchase flow: home, shop, product pages, cart, checkout and order confirmation. Pages switch by URL hash (`#shop`, `#product-dark`, `#cart`, `#checkout`, `#confirmation`), so it runs from any static host.
+
+## Files
+
+- `index.html`: every page of the site
+- `css/style.css`: all styling
+- `js/config.js`: **the file you edit** (brand name, Formspree endpoint, prices, roasts, shipping)
+- `js/app.js`: cart, product options, checkout and confirmation logic
+- `assets/`: photos and two short muted video loops cut from the Higgsfield footage
+- `tools/build_preview.py`: rebuilds the one-file preview used for the Claude Artifact
+
+## Connect Formspree
+
+1. Create a form at formspree.io and copy its endpoint (looks like `https://formspree.io/f/abcdwxyz`).
+2. Paste it into `formspreeEndpoint` in `js/config.js`.
+
+Each placed order is then posted to Formspree with: order ID, email, name, shipping address, phone, marketing opt-in, line items, whether it includes a subscription, shipping method, subtotal, shipping, total, card brand and time. Card number, expiry and security code are never sent. While the endpoint is empty, checkout still completes and logs the order to the browser console instead.
+
+## Rename the brand
+
+Change `brandName` in `js/config.js`. It updates the header, footer, boxes, page title and the Formspree email subject. The kitchen photo (`assets/img/hero-kitchen.jpg`) and the pod photo (`assets/img/kpod.jpg`) have "Klean Cups" printed on the packaging, so replace those images when the name is final.
+
+## Run or deploy
+
+- Locally: `python3 -m http.server` in this folder, then open http://localhost:8000.
+- Live: drag this folder onto Netlify Drop, or push it to GitHub Pages, Cloudflare Pages or Vercel. No server is needed.
+
+## Placeholders to settle before launch
+
+- Prices ($13.99 per 12-pod box, $37.99 for 36), shipping rates, the 10% subscription discount.
+- Tasting notes and intensity for each roast.
+- Material and compatibility copy ("zero plastic in the pod, lid or filter", "fits Keurig K-Cup pod brewers") should match the final pod spec.
+- Payment notice on checkout and the confirmation note both say no card is charged. Edit `paymentNotice` and `confirmationNote` when real payments are added.
