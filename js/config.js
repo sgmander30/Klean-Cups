@@ -30,6 +30,28 @@ window.SITE = {
     { id: "36", pods: 36, boxes: 3, price: 69.84, label: "3 boxes" }
   ],
 
+  // "In the news" cards on the Why no plastic page. Images load from each outlet's own preview image.
+  news: [
+    { kind: "News", outlet: "TIME", date: "Nov 2025", title: "What Happens to the Plastic in Single-Serve Coffee Pods?",
+      url: "https://time.com/7331064/coffee-pods-plastic/",
+      image: "https://static.time.com/v3/assets/bltea6093859af6183b/bltf8b1aacf055ab056/6998cb45e1ba00c88898e13f/Coffee-pods.png?branch=production&width=1200&quality=75&auto=webp&crop=16:9" },
+    { kind: "News", outlet: "Fresh Cup", date: "Nov 2025", title: "New Research Shows Coffee Pods May Release Microplastics Into Your Cup",
+      url: "https://freshcup.com/new-research-shows-coffee-pods-may-release-microplastics-into-your-cup/",
+      image: "https://freshcup.com/wp-content/uploads/2025/11/zack-xavier-z0QpU0v31Ms-unsplash-1-scaled.jpg" },
+    { kind: "News", outlet: "Daily Coffee News", date: "Sep 2025", title: "Microplastics Are Elevated in Hot Coffee in To-Go Cups, Study Finds",
+      url: "https://dailycoffeenews.com/2025/09/04/microplastics-are-elevated-in-hot-coffee-in-to-go-cups-study-finds",
+      image: "https://dailycoffeenews.com/wp-content/uploads/2025/09/coffee-cups.jpg" },
+    { kind: "News", outlet: "National Geographic", date: "Feb 2025", title: "Alarming levels of microplastics found in human brains",
+      url: "https://www.nationalgeographic.com/science/article/microplastic-human-brain-health",
+      image: "https://i.natgeofe.com/n/c834bf54-e85e-42f7-a9f2-385f8d605168/F0372732-Brain_blood_vessels_CT_scan_16x9.jpg?w=1200" },
+    { kind: "Study", outlet: "Nature Medicine", date: "Feb 2025", title: "Bioaccumulation of microplastics in decedent human brains",
+      url: "https://www.nature.com/articles/s41591-024-03453-1",
+      image: "https://media.springernature.com/m685/springer-static/image/art%3A10.1038%2Fs41591-024-03453-1/MediaObjects/41591_2024_3453_Fig1_HTML.png" },
+    { kind: "News", outlet: "Science News", date: "Apr 2024", title: "A new study has linked microplastics to heart attacks and strokes. Here’s what we know",
+      url: "https://www.sciencenews.org/article/microplastics-nanoplastics-heart-attacks-strokes-health",
+      image: "https://www.sciencenews.org/wp-content/uploads/sites/2/2024/03/031824_MR_microplastics_feat.jpg" }
+  ],
+
   products: [
     {
       id: "dark", packshot: "assets/img/packshot-dark.jpg", name: "Dark Roast", color: "#C8242A", intensity: 4,

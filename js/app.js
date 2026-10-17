@@ -85,6 +85,22 @@
       '<button class="btn-buy" type="button" data-buy="' + p.id + '">Buy now</button>' +
     "</article>";
   }
+  function renderNews() {
+    var root = $("#news-grid");
+    if (!root || !S.news) return;
+    root.innerHTML = S.news.map(function (n) {
+      return '<a class="news-card" href="' + esc(n.url) + '" target="_blank" rel="noopener">' +
+        '<span class="news-img" data-outlet="' + esc(n.outlet) + '"><img src="' + esc(n.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer"></span>' +
+        '<span class="news-meta"><b>' + esc(n.kind) + "</b> " + esc(n.outlet) + " · " + esc(n.date) + "</span>" +
+        '<span class="news-title">' + esc(n.title) + "</span>" +
+        '<span class="news-go">Read article ↗</span>' +
+      "</a>";
+    }).join("");
+    // If an outlet blocks its preview image, show the outlet name instead of a broken image.
+    $$(".news-img img", root).forEach(function (img) {
+      img.addEventListener("error", function () { img.parentNode.classList.add("no-img"); img.remove(); });
+    });
+  }
   function renderLineups() {
     var singles = S.products.filter(function (p) { return !p.bundle; });
     $("#home-lineup").innerHTML = singles.map(cardHTML).join("");
@@ -491,6 +507,7 @@
   $("#checkout-form").addEventListener("submit", placeOrder);
   applyBrand();
   renderLineups();
+  renderNews();
   commit();
   window.addEventListener("hashchange", route);
   route();
