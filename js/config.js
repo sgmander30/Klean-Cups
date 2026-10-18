@@ -21,6 +21,8 @@ window.SITE = {
     express: { label: "Express", detail: "2 to 3 business days", price: 12.95 }
   },
   subscribeDiscount: 0.10, // 10% off subscription orders
+  newsletterDiscount: 0.10, // 10% off one-time items after a newsletter sign-up (does not stack with subscribe)
+  newsletterDelayMs: 8000, // pop-up delay; it also opens on exit intent on desktop
 
   // Pack sizes and prices for the single-roast boxes.
   sizes: [

@@ -120,12 +120,19 @@
     var base = sizeFor(product(l.id), l.size).price;
     return l.plan === "sub" ? round2(base * (1 - S.subscribeDiscount)) : base;
   }
+  // Newsletter 10% applies to one-time items only; subscriptions already get their own 10%, so the two never stack.
+  function joined() { return !!load("kc_newsletter", null); }
   function totals(method) {
     var sub = round2(cart.reduce(function (t, l) { return t + unitPrice(l) * l.qty; }, 0));
     var compare = round2(cart.reduce(function (t, l) { return t + sizeFor(product(l.id), l.size).price * l.qty; }, 0));
+    var once = cart.reduce(function (t, l) { return l.plan === "sub" ? t : t + unitPrice(l) * l.qty; }, 0);
+    var nl = joined() ? round2(once * S.newsletterDiscount) : 0;
     var m = S.shipping[method || "standard"];
-    var ship = cart.length === 0 ? 0 : (method === "express" ? m.price : (sub >= S.freeShippingMin ? 0 : m.price));
-    return { subtotal: sub, savings: round2(compare - sub), shipping: ship, total: round2(sub + ship) };
+    var ship = cart.length === 0 ? 0 : (method === "express" ? m.price : (sub - nl >= S.freeShippingMin ? 0 : m.price));
+    return { subtotal: sub, savings: round2(compare - sub), newsletter: nl, shipping: ship, total: round2(sub - nl + ship) };
+  }
+  function nlRow(t) {
+    return t.newsletter > 0 ? '<div class="save"><dt>Newsletter 10% off</dt><dd>−' + fmt(t.newsletter) + "</dd></div>" : "";
   }
   function count() { return cart.reduce(function (t, l) { return t + l.qty; }, 0); }
   function commit() {
@@ -160,8 +167,8 @@
       return;
     }
     var t = totals("standard");
-    var left = round2(S.freeShippingMin - t.subtotal);
-    var pct = Math.min(100, Math.round(t.subtotal / S.freeShippingMin * 100));
+    var left = round2(S.freeShippingMin - (t.subtotal - t.newsletter));
+    var pct = Math.min(100, Math.round((t.subtotal - t.newsletter) / S.freeShippingMin * 100));
     root.innerHTML =
       '<div class="cart-grid">' +
         '<ul class="cart-lines">' + cart.map(function (l, i) {
@@ -185,6 +192,7 @@
           '<dl class="sum">' +
             "<div><dt>Subtotal</dt><dd>" + fmt(t.subtotal) + "</dd></div>" +
             (t.savings > 0 ? '<div class="save"><dt>Subscription savings (included)</dt><dd>−' + fmt(t.savings) + "</dd></div>" : "") +
+            nlRow(t) +
             "<div><dt>Shipping</dt><dd>" + (t.shipping ? fmt(t.shipping) : "Free") + "</dd></div>" +
             '<div class="sum-total"><dt>Total</dt><dd>' + fmt(t.total) + "</dd></div>" +
           "</dl>" +
@@ -300,6 +308,7 @@
       '<dl class="sum">' +
         "<div><dt>Subtotal</dt><dd>" + fmt(t.subtotal) + "</dd></div>" +
         (t.savings > 0 ? '<div class="save"><dt>Subscription savings (included)</dt><dd>−' + fmt(t.savings) + "</dd></div>" : "") +
+        nlRow(t) +
         "<div><dt>Shipping</dt><dd>Calculated at payment</dd></div>" +
         '<div class="sum-total"><dt>Total before shipping</dt><dd>' + fmt(t.total - t.shipping) + "</dd></div>" +
       "</dl>";
@@ -308,6 +317,8 @@
   function renderCheckout() {
     if (!cart.length) { location.hash = "#cart"; return; }
     $("#checkout-summary").innerHTML = summaryHTML(cart, totals("standard"));
+    var nl = load("kc_newsletter", null), em = $("#email");
+    if (nl && !em.value) em.value = nl.email;
   }
 
   function validate(form) {
@@ -358,6 +369,8 @@
       items: order.lines.map(function (l) { return l.qty + " × " + product(l.id).name + ", " + lineDesc(l) + " @ " + fmt(unitPrice(l)); }).join("\n"),
       has_subscription: order.lines.some(function (l) { return l.plan === "sub"; }) ? "yes" : "no",
       subtotal: fmt(t.subtotal),
+      newsletter_discount: t.newsletter > 0 ? "−" + fmt(t.newsletter) : "none",
+      total_before_shipping: fmt(t.total - t.shipping),
       placed_at: order.placedAt
     };
 
@@ -409,6 +422,7 @@
       '<dl class="sum">' +
         "<div><dt>Subtotal</dt><dd>" + fmt(o.totals.subtotal) + "</dd></div>" +
         (o.totals.savings > 0 ? '<div class="save"><dt>Subscription savings (included)</dt><dd>−' + fmt(o.totals.savings) + "</dd></div>" : "") +
+        nlRow(o.totals) +
         '<div class="sum-total"><dt>Total before shipping</dt><dd>' + fmt(o.totals.total - o.totals.shipping) + "</dd></div>" +
       "</dl>" +
       '<p class="ticket-thanks">Thanks for holding the plastic.</p>' +
@@ -424,6 +438,87 @@
     el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { el.classList.remove("show"); setTimeout(function () { el.hidden = true; }, 300); }, 3500);
+  }
+
+  // ---------- newsletter pop-up ----------
+  // Shows once after a short delay (or on exit intent on desktop); never again once dismissed or joined.
+  var popupShown = false;
+  function popupState() { try { return localStorage.getItem("kc_popup"); } catch (e) { return "dismissed"; } }
+  function setPopupState(v) { try { localStorage.setItem("kc_popup", v); } catch (e) {} }
+  function popupAllowed() {
+    var h = location.hash;
+    return !popupShown && !popupState() && !joined() && h !== "#checkout" && h !== "#confirmation";
+  }
+  function openPopup() {
+    if (!popupAllowed()) return;
+    popupShown = true;
+    var el = $("#nl-popup");
+    el.hidden = false;
+    document.body.classList.add("modal-open");
+    setTimeout(function () { $("#nl-email").focus(); }, 50);
+  }
+  function closePopup() {
+    var el = $("#nl-popup");
+    if (el.hidden) return;
+    if (!popupState()) setPopupState("dismissed");
+    el.hidden = true;
+    document.body.classList.remove("modal-open");
+  }
+  function joinNewsletter(e) {
+    e.preventDefault();
+    var input = $("#nl-email"), err = $("#nl-error"), email = input.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      err.textContent = "Enter a valid email address, like you@example.com.";
+      err.hidden = false; input.setAttribute("aria-invalid", "true"); input.focus();
+      return;
+    }
+    err.hidden = true;
+    var payload = {
+      _subject: "New " + S.brandName + " newsletter sign-up",
+      email: email,
+      type: "newsletter",
+      discount: "10% off one-time items",
+      page: location.hash || "#home",
+      signed_up_at: new Date().toISOString()
+    };
+    var btn = $("#nl-submit"), label = btn.textContent;
+    btn.disabled = true; btn.textContent = "One moment…";
+    function done() {
+      save("kc_newsletter", { email: email, at: payload.signed_up_at });
+      setPopupState("joined");
+      btn.disabled = false; btn.textContent = label;
+      $("#nl-form").hidden = true;
+      $("#nl-done").hidden = false;
+      commit();
+      if (location.hash === "#cart") renderCart();
+      if (location.hash === "#checkout") renderCheckout();
+    }
+    if (!S.formspreeEndpoint) {
+      if (window.console) console.info("[newsletter] No Formspree endpoint set in js/config.js, so this sign-up was not sent anywhere.", payload);
+      setTimeout(done, 500);
+      return;
+    }
+    fetch(S.formspreeEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      if (!res.ok) throw new Error("status " + res.status);
+      done();
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = label;
+      err.textContent = "We couldn't sign you up just now. Check your connection and try again.";
+      err.hidden = false;
+    });
+  }
+  function initPopup() {
+    $("#nl-form").addEventListener("submit", joinNewsletter);
+    $$("[data-nl-close]").forEach(function (b) { b.addEventListener("click", closePopup); });
+    $("#nl-popup").addEventListener("click", function (e) { if (e.target === e.currentTarget) closePopup(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePopup(); });
+    if (!popupAllowed()) return;
+    setTimeout(openPopup, S.newsletterDelayMs);
+    document.documentElement.addEventListener("mouseleave", function (e) { if (e.clientY <= 0) openPopup(); });
   }
 
   // ---------- router ----------
@@ -478,4 +573,5 @@
   commit();
   window.addEventListener("hashchange", route);
   route();
+  initPopup();
 })();

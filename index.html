@@ -219,6 +219,29 @@
   </div>
 </footer>
 
+<div class="nl-popup" id="nl-popup" hidden>
+  <div class="nl-card" role="dialog" aria-modal="true" aria-labelledby="nl-title">
+    <button class="nl-x" type="button" data-nl-close aria-label="Close">×</button>
+    <form id="nl-form" novalidate>
+      <p class="nl-kicker">Join the counter</p>
+      <h2 id="nl-title">10% off your first box</h2>
+      <p class="nl-lede">Sign up for news from <span data-brand>Klean Cups</span> and we'll take 10% off your order, applied to your cart automatically.</p>
+      <label class="sr-only" for="nl-email">Email address</label>
+      <input id="nl-email" type="email" autocomplete="email" placeholder="you@example.com" required>
+      <p class="nl-error" id="nl-error" role="alert" hidden></p>
+      <button class="btn btn-red btn-block" id="nl-submit" type="submit">Get 10% off</button>
+      <button class="link-btn center" type="button" data-nl-close>No thanks</button>
+      <p class="nl-fine">Applies to one-time items. Subscriptions already save 10%. Unsubscribe anytime.</p>
+    </form>
+    <div id="nl-done" hidden>
+      <p class="nl-kicker">You're in!</p>
+      <h2>10% off is in your cart</h2>
+      <p class="nl-lede">Your discount is applied to one-time items at checkout. Thanks for holding the plastic.</p>
+      <a class="btn btn-red btn-block" href="#shop" data-nl-close>Shop the roasts</a>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script src="js/config.js"></script>
