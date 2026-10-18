@@ -238,6 +238,7 @@
     var root = $("#pdp");
     root.style.setProperty("--roast", p.color);
     root.innerHTML =
+      '<div class="pdp-top">' +
       '<div class="pdp-media">' +
         '<div class="pdp-shot"><img src="' + p.packshot + '" alt="' + esc(p.name) + ' box and pod"></div>' +
         (p.photo ? '<figure class="pdp-photo frame"><img src="' + p.photo + '" alt="" loading="lazy"></figure>' : "") +
@@ -265,6 +266,7 @@
         "</div>" +
         '<ul class="pdp-facts"><li><b>Ingredients</b> Coffee. That\'s it.</li><li><b>Fits</b> Keurig® K-Cup® pod brewers</li><li><b>Plastic</b> None. Not in the pod, lid or filter.</li></ul>' +
       "</form>" +
+      "</div>" +
       madeOfHTML();
 
     var form = $("#pdp-form"), qty = 1;
