@@ -22,7 +22,7 @@ window.SITE = {
   },
   subscribeDiscount: 0.10, // 10% off subscription orders
   newsletterDiscount: 0.10, // 10% off one-time items after a newsletter sign-up (does not stack with subscribe)
-  newsletterDelayMs: 8000, // pop-up delay; it also opens on exit intent on desktop
+  newsletterDelayMs: 3000, // pop-up delay; it also opens on exit intent on desktop
 
   // Pack sizes and prices for the single-roast boxes.
   sizes: [
