@@ -13,8 +13,7 @@ A static storefront (plain HTML, CSS and JavaScript, no build step) with a worki
 
 ## Connect Formspree
 
-1. Create a form at formspree.io and copy its endpoint (looks like `https://formspree.io/f/abcdwxyz`).
-2. Paste it into `formspreeEndpoint` in `js/config.js`.
+Connected: `formspreeEndpoint` in `js/config.js` is set to `https://formspree.io/f/xjygzbla`. To use a different form, paste its endpoint there.
 
 Each placed order is then posted to Formspree with: order ID, email, name, shipping address, phone, marketing opt-in, line items, whether it includes a subscription, shipping method, subtotal, shipping, total, card brand and time. Card number, expiry and security code are never sent. While the endpoint is empty, checkout still completes and logs the order to the browser console instead.
 

@@ -9,7 +9,7 @@ window.SITE = {
 
   // Paste your Formspree form endpoint here, e.g. "https://formspree.io/f/abcdwxyz".
   // While it is empty, checkout still works end to end but no order is sent anywhere.
-  formspreeEndpoint: "",
+  formspreeEndpoint: "https://formspree.io/f/xjygzbla",
 
   // Shown on the checkout page above the card fields, and on the confirmation page.
   // Card details are never sent to Formspree or anywhere else.
