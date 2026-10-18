@@ -144,6 +144,7 @@
     badge.classList.toggle("has", c > 0);
   }
   function addToCart(line) {
+    track("Add to cart", { product: line.id, size: line.size, plan: line.plan });
     var existing = cart.filter(function (l) { return lineKey(l) === lineKey(line); })[0];
     if (existing) existing.qty = Math.min(existing.qty + line.qty, 20);
     else cart.push(line);
@@ -378,6 +379,7 @@
     btn.disabled = true; btn.textContent = "One moment…";
 
     function done() {
+      track("Pre-order", { items: count(), total: fmt(t.total - t.shipping) });
       save("kc_last_order", order);
       cart = []; commit();
       form.reset();
@@ -486,6 +488,7 @@
     function done() {
       save("kc_newsletter", { email: email, at: payload.signed_up_at });
       setPopupState("joined");
+      track("Newsletter sign-up", { page: payload.page });
       btn.disabled = false; btn.textContent = label;
       $("#nl-form").hidden = true;
       $("#nl-done").hidden = false;
@@ -521,9 +524,22 @@
     document.documentElement.addEventListener("mouseleave", function (e) { if (e.clientY <= 0) openPopup(); });
   }
 
+  // ---------- analytics ----------
+  // The site routes with #hashes, which Vercel Analytics counts as one page, so each view is reported as its own path
+  // (#product-dark shows up as /product/dark). index.html turns off the script's automatic page views.
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  window.va("beforeSend", function (e) { e.url = e.url.split("#")[0]; return e; });
+  function trackPage(view, arg) {
+    var path = view === "home" ? "/" : view === "product" ? "/product/" + arg : "/" + view;
+    window.va("pageview", { route: view === "product" ? "/product/[id]" : path, path: path });
+  }
+  // Custom events only show up in Vercel on the Pro and Enterprise plans.
+  function track(name, data) { window.va("event", { name: name, data: data }); }
+
   // ---------- router ----------
   function route() {
-    var h = (location.hash || "#home").slice(1) || "home";
+    var hash = location.hash || "#home";
+    var h = hash.slice(1) || "home";
     var view = h, arg = null;
     if (h.indexOf("product-") === 0) { view = "product"; arg = h.slice(8); }
     if (!$('[data-view="' + view + '"]')) view = "home";
@@ -536,6 +552,7 @@
     if (view === "cart") renderCart();
     if (view === "checkout") renderCheckout();
     if (view === "confirmation") renderConfirmation();
+    if ((location.hash || "#home") === hash) trackPage(view, arg); // skip views that redirected (empty checkout → cart)
     window.scrollTo(0, 0);
   }
 
