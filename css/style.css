@@ -319,7 +319,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .pdp { display: grid; gap: 56px; }
 .pdp-top { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: start; }
 .pdp-media { display: grid; gap: 24px; min-width: 0; }
-.pdp-photo { aspect-ratio: 16 / 10; max-width: 100%; }
+.pdp-photo { aspect-ratio: 16 / 10; max-width: 100%; position: relative; overflow: hidden; }
+/* Pinned inside the frame padding: Safari on iPhone ignores height: 100% inside an aspect-ratio box and lets the photo spill out */
+.pdp-photo img { position: absolute; inset: 8px; display: block; width: calc(100% - 16px); height: calc(100% - 16px); object-fit: cover; }
 .pdp-info { min-width: 0; display: flex; flex-direction: column; gap: 14px; position: sticky; top: 96px; }
 .pdp-info h1 { font: 400 clamp(2.6rem, 5.5vw, 4rem)/1 var(--f-display); color: var(--roast); }
 .intensity { display: inline-flex; align-items: center; gap: 6px; font: 500 0.75rem/1 var(--f-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
