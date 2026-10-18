@@ -11,10 +11,8 @@ window.SITE = {
   // While it is empty, checkout still works end to end but no order is sent anywhere.
   formspreeEndpoint: "https://formspree.io/f/xjygzbla",
 
-  // Shown on the checkout page above the card fields, and on the confirmation page.
-  // Card details are never sent to Formspree or anywhere else.
-  paymentNotice: "Payments aren't switched on yet, so your card will not be charged. Card details stay in your browser and are never sent.",
-  confirmationNote: "Nothing has been charged. We'll email you to confirm before anything ships.",
+  // Shown on the "Thank you for joining the pre-order" page.
+  confirmationNote: "Nothing has been charged. We'll email you before your pods ship.",
 
   currency: "USD",
   freeShippingMin: 35,

@@ -178,45 +178,17 @@
     <div class="checkout" id="checkout-wrap">
       <form id="checkout-form" class="checkout-form" novalidate>
         <fieldset>
-          <legend>Contact</legend>
-          <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></div>
-          <label class="check"><input id="news" name="news" type="checkbox" checked> Send me roast news and deals</label>
-        </fieldset>
-
-        <fieldset>
-          <legend>Shipping address</legend>
+          <legend>Contact information</legend>
           <div class="row2">
             <div class="field"><label for="first">First name</label><input id="first" name="first" autocomplete="given-name" required></div>
             <div class="field"><label for="last">Last name</label><input id="last" name="last" autocomplete="family-name" required></div>
           </div>
-          <div class="field"><label for="address1">Address</label><input id="address1" name="address1" autocomplete="address-line1" required placeholder="Street address"></div>
-          <div class="field"><label for="address2">Apartment, suite, etc. <span class="opt">(optional)</span></label><input id="address2" name="address2" autocomplete="address-line2"></div>
-          <div class="row3">
-            <div class="field"><label for="city">City</label><input id="city" name="city" autocomplete="address-level2" required></div>
-            <div class="field"><label for="state">State</label><select id="state" name="state" autocomplete="address-level1" required><option value="">Choose</option></select></div>
-            <div class="field"><label for="zip">ZIP code</label><input id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" required maxlength="10"></div>
-          </div>
-          <div class="field"><label for="phone">Phone <span class="opt">(optional, for delivery updates)</span></label><input id="phone" name="phone" type="tel" autocomplete="tel"></div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Shipping method</legend>
-          <div class="ship-options" id="ship-options"></div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Payment</legend>
-          <p class="notice" id="payment-notice"></p>
-          <div class="field"><label for="cc-number">Card number</label><input id="cc-number" inputmode="numeric" autocomplete="cc-number" required placeholder="1234 5678 9012 3456" maxlength="23"></div>
-          <div class="row3">
-            <div class="field"><label for="cc-name">Name on card</label><input id="cc-name" autocomplete="cc-name" required></div>
-            <div class="field"><label for="cc-exp">Expiry (MM/YY)</label><input id="cc-exp" inputmode="numeric" autocomplete="cc-exp" required placeholder="MM/YY" maxlength="5"></div>
-            <div class="field"><label for="cc-cvc">Security code</label><input id="cc-cvc" inputmode="numeric" autocomplete="cc-csc" required placeholder="CVC" maxlength="4"></div>
-          </div>
+          <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></div>
+          <label class="check"><input id="news" name="news" type="checkbox" checked> Send me roast news and deals</label>
         </fieldset>
 
         <p class="form-error" id="form-error" role="alert" hidden></p>
-        <button class="btn btn-red btn-block" type="submit" id="place-order">Place order</button>
+        <button class="btn btn-red btn-block" type="submit" id="place-order">Continue to payment</button>
       </form>
       <aside class="summary" id="checkout-summary" aria-label="Order summary"></aside>
     </div>

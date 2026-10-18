@@ -15,7 +15,7 @@ A static storefront (plain HTML, CSS and JavaScript, no build step) with a worki
 
 Connected: `formspreeEndpoint` in `js/config.js` is set to `https://formspree.io/f/xjygzbla`. To use a different form, paste its endpoint there.
 
-Each placed order is then posted to Formspree with: order ID, email, name, shipping address, phone, marketing opt-in, line items, whether it includes a subscription, shipping method, subtotal, shipping, total, card brand and time. Card number, expiry and security code are never sent. While the endpoint is empty, checkout still completes and logs the order to the browser console instead.
+Checkout is a pre-order: it asks only for first name, last name and email, and the "Continue to payment" button doesn't take payment. It posts the pre-order to Formspree (pre-order ID, name, email, marketing opt-in, line items, whether it includes a subscription, subtotal and time) and shows "Thank you for joining the pre-order". While the endpoint is empty, it logs the pre-order to the browser console instead.
 
 ## Rename the brand
 
@@ -31,4 +31,4 @@ Change `brandName` in `js/config.js`. It updates the header, footer, boxes, page
 - Prices ($25.32 per 12-pod box at $2.11/pod, $69.84 for 36 at $1.94/pod), shipping rates, the 10% subscription discount.
 - Tasting notes and intensity for each roast.
 - Material and compatibility copy ("zero plastic in the pod, lid or filter", "fits Keurig K-Cup pod brewers") should match the final pod spec. The "What it's made of" parts list (`materials` in `js/config.js`) is a draft spec.
-- Payment notice on checkout and the confirmation note both say no card is charged. Edit `paymentNotice` and `confirmationNote` when real payments are added.
+- The thank-you page says nothing has been charged (`confirmationNote`). When real payments are added, checkout needs shipping and payment steps again (they're in the git history before the pre-order change).

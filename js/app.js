@@ -184,7 +184,7 @@
             '<div class="meter"><i style="width:' + pct + '%"></i></div></div>' +
           '<dl class="sum">' +
             "<div><dt>Subtotal</dt><dd>" + fmt(t.subtotal) + "</dd></div>" +
-            (t.savings > 0 ? '<div class="save"><dt>Subscription savings</dt><dd>−' + fmt(t.savings) + "</dd></div>" : "") +
+            (t.savings > 0 ? '<div class="save"><dt>Subscription savings (included)</dt><dd>−' + fmt(t.savings) + "</dd></div>" : "") +
             "<div><dt>Shipping</dt><dd>" + (t.shipping ? fmt(t.shipping) : "Free") + "</dd></div>" +
             '<div class="sum-total"><dt>Total</dt><dd>' + fmt(t.total) + "</dd></div>" +
           "</dl>" +
@@ -292,20 +292,6 @@
   }
 
   // ---------- checkout ----------
-  var STATES = "AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split(" ");
-  function shipMethod() { var r = $("input[name=ship]:checked"); return r ? r.value : "standard"; }
-
-  function renderShipOptions() {
-    var t = totals("standard");
-    var html = Object.keys(S.shipping).map(function (k, i) {
-      var m = S.shipping[k];
-      var price = k === "standard" && t.subtotal >= S.freeShippingMin ? "Free" : fmt(m.price);
-      var checked = (shipMethod() === k) || (!$("input[name=ship]:checked") && i === 0);
-      return '<label class="plan ship"><input type="radio" name="ship" value="' + k + '"' + (checked ? " checked" : "") + "><span><b>" + m.label + "</b><small>" + m.detail + "</small></span><em>" + price + "</em></label>";
-    }).join("");
-    $("#ship-options").innerHTML = html;
-  }
-
   function summaryHTML(lines, t) {
     return '<h2>Order summary</h2><ul class="sum-lines">' + lines.map(function (l) {
       var p = product(l.id);
@@ -313,52 +299,23 @@
     }).join("") + "</ul>" +
       '<dl class="sum">' +
         "<div><dt>Subtotal</dt><dd>" + fmt(t.subtotal) + "</dd></div>" +
-        (t.savings > 0 ? '<div class="save"><dt>Subscription savings</dt><dd>−' + fmt(t.savings) + "</dd></div>" : "") +
-        "<div><dt>Shipping</dt><dd>" + (t.shipping ? fmt(t.shipping) : "Free") + "</dd></div>" +
-        '<div class="sum-total"><dt>Total</dt><dd>' + fmt(t.total) + "</dd></div>" +
+        (t.savings > 0 ? '<div class="save"><dt>Subscription savings (included)</dt><dd>−' + fmt(t.savings) + "</dd></div>" : "") +
+        "<div><dt>Shipping</dt><dd>Calculated at payment</dd></div>" +
+        '<div class="sum-total"><dt>Total before shipping</dt><dd>' + fmt(t.total - t.shipping) + "</dd></div>" +
       "</dl>";
   }
 
   function renderCheckout() {
     if (!cart.length) { location.hash = "#cart"; return; }
-    renderShipOptions();
-    $("#checkout-summary").innerHTML = summaryHTML(cart, totals(shipMethod()));
-    $("#payment-notice").textContent = S.paymentNotice;
-    $("#payment-notice").hidden = !S.paymentNotice;
-  }
-
-  function luhn(num) {
-    var sum = 0, alt = false;
-    for (var i = num.length - 1; i >= 0; i--) {
-      var n = +num[i];
-      if (alt) { n *= 2; if (n > 9) n -= 9; }
-      sum += n; alt = !alt;
-    }
-    return sum % 10 === 0;
-  }
-  function cardBrand(num) {
-    if (/^4/.test(num)) return "Visa";
-    if (/^(5[1-5]|2[2-7])/.test(num)) return "Mastercard";
-    if (/^3[47]/.test(num)) return "American Express";
-    if (/^6(011|5)/.test(num)) return "Discover";
-    return "Card";
+    $("#checkout-summary").innerHTML = summaryHTML(cart, totals("standard"));
   }
 
   function validate(form) {
     var errs = [];
     function bad(id, msg) { var el = $("#" + id); el.setAttribute("aria-invalid", "true"); errs.push({ el: el, msg: msg }); }
     $$("[aria-invalid]", form).forEach(function (el) { el.removeAttribute("aria-invalid"); });
+    ["first", "last"].forEach(function (id) { if (!$("#" + id).value.trim()) bad(id, "Fill in your first and last name."); });
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("#email").value.trim())) bad("email", "Enter a valid email address, like you@example.com.");
-    ["first", "last", "address1", "city"].forEach(function (id) { if (!$("#" + id).value.trim()) bad(id, "Fill in your name and full shipping address."); });
-    if (!$("#state").value) bad("state", "Choose your state.");
-    if (!/^\d{5}(-\d{4})?$/.test($("#zip").value.trim())) bad("zip", "Enter a 5-digit ZIP code.");
-    var num = $("#cc-number").value.replace(/\D/g, "");
-    if (num.length < 13 || !luhn(num)) bad("cc-number", "That card number doesn't look right. Check the digits.");
-    if (!$("#cc-name").value.trim()) bad("cc-name", "Enter the name on the card.");
-    var exp = $("#cc-exp").value.match(/^(\d{2})\/(\d{2})$/);
-    var now = new Date();
-    if (!exp || +exp[1] < 1 || +exp[1] > 12 || new Date(2000 + +exp[2], +exp[1], 1) <= now) bad("cc-exp", "Enter an expiry date in the future, as MM/YY.");
-    if (!/^\d{3,4}$/.test($("#cc-cvc").value)) bad("cc-cvc", "Enter the 3 or 4 digit security code.");
     return errs;
   }
 
@@ -367,6 +324,7 @@
     return "KC-" + n;
   }
 
+  // "Continue to payment" doesn't take payment yet: it sends the pre-order to Formspree and thanks the customer.
   function placeOrder(e) {
     e.preventDefault();
     var form = e.target, errBox = $("#form-error");
@@ -379,57 +337,43 @@
     }
     errBox.hidden = true;
 
-    var method = shipMethod();
-    var t = totals(method);
-    var num = $("#cc-number").value.replace(/\D/g, "");
+    var t = totals("standard");
     var order = {
       id: orderId(),
       placedAt: new Date().toISOString(),
       email: $("#email").value.trim(),
       first: $("#first").value.trim(),
       last: $("#last").value.trim(),
-      address: [$("#address1").value.trim(), $("#address2").value.trim()].filter(Boolean).join(", "),
-      city: $("#city").value.trim(), state: $("#state").value, zip: $("#zip").value.trim(),
-      phone: $("#phone").value.trim(),
       news: $("#news").checked,
-      ship: method,
-      card: cardBrand(num),
       lines: cart.map(function (l) { return { id: l.id, size: l.size, plan: l.plan, freq: l.freq, qty: l.qty }; }),
       totals: t
     };
 
-    // Only order details go to Formspree. Card number, expiry and code are never included.
     var payload = {
-      _subject: "New " + S.brandName + " order " + order.id,
+      _subject: "New " + S.brandName + " pre-order " + order.id,
       order_id: order.id,
-      email: order.email,
       name: order.first + " " + order.last,
-      shipping_address: order.address + ", " + order.city + ", " + order.state + " " + order.zip,
-      phone: order.phone || "",
+      email: order.email,
       marketing_opt_in: order.news ? "yes" : "no",
       items: order.lines.map(function (l) { return l.qty + " × " + product(l.id).name + ", " + lineDesc(l) + " @ " + fmt(unitPrice(l)); }).join("\n"),
       has_subscription: order.lines.some(function (l) { return l.plan === "sub"; }) ? "yes" : "no",
-      shipping_method: S.shipping[method].label,
       subtotal: fmt(t.subtotal),
-      shipping: t.shipping ? fmt(t.shipping) : "Free",
-      total: fmt(t.total),
-      payment_method: order.card + " (not charged)",
       placed_at: order.placedAt
     };
 
-    var btn = $("#place-order");
-    btn.disabled = true; btn.textContent = "Placing order…";
+    var btn = $("#place-order"), label = btn.textContent;
+    btn.disabled = true; btn.textContent = "One moment…";
 
     function done() {
       save("kc_last_order", order);
       cart = []; commit();
       form.reset();
-      btn.disabled = false; btn.textContent = "Place order";
+      btn.disabled = false; btn.textContent = label;
       location.hash = "#confirmation";
     }
 
     if (!S.formspreeEndpoint) {
-      if (window.console) console.info("[checkout] No Formspree endpoint set in js/config.js, so this order was not sent anywhere.", payload);
+      if (window.console) console.info("[checkout] No Formspree endpoint set in js/config.js, so this pre-order was not sent anywhere.", payload);
       setTimeout(done, 700);
       return;
     }
@@ -441,8 +385,8 @@
       if (!res.ok) throw new Error("status " + res.status);
       done();
     }).catch(function () {
-      btn.disabled = false; btn.textContent = "Place order";
-      errBox.textContent = "We couldn't place your order just now. Check your connection and try again.";
+      btn.disabled = false; btn.textContent = label;
+      errBox.textContent = "We couldn't save your pre-order just now. Check your connection and try again.";
       errBox.hidden = false;
     });
   }
@@ -451,25 +395,22 @@
     var o = load("kc_last_order", null);
     var root = $("#ticket");
     if (!o) {
-      root.innerHTML = '<div class="empty"><p>No recent order to show.</p><a class="btn btn-red" href="#shop">See the menu</a></div>';
+      root.innerHTML = '<div class="empty"><p>No recent pre-order to show.</p><a class="btn btn-red" href="#shop">See the menu</a></div>';
       return;
     }
-    var shipLabel = S.shipping[o.ship].label + ", " + S.shipping[o.ship].detail.toLowerCase();
     root.innerHTML =
-      '<div class="ticket-head"><p class="ticket-kicker">Order up!</p>' +
-        '<h1>Thanks, ' + esc(o.first) + ".</h1>" +
-        '<p class="ticket-no">Order <b>' + esc(o.id) + "</b></p></div>" +
-      '<p class="ticket-note">' + esc(S.confirmationNote) + ' A copy of your order is going to <b>' + esc(o.email) + "</b>.</p>" +
+      '<div class="ticket-head"><p class="ticket-kicker">You\'re in!</p>' +
+        "<h1>Thank you for joining the pre&#8209;order, " + esc(o.first) + ".</h1>" +
+        '<p class="ticket-no">Pre-order <b>' + esc(o.id) + "</b></p></div>" +
+      '<p class="ticket-note">' + esc(S.confirmationNote) + " We'll write to <b>" + esc(o.email) + "</b>.</p>" +
       '<ul class="ticket-lines">' + o.lines.map(function (l) {
         return "<li><span>" + l.qty + " × " + esc(product(l.id).name) + "<small>" + esc(lineDesc(l)) + "</small></span><span>" + fmt(unitPrice(l) * l.qty) + "</span></li>";
       }).join("") + "</ul>" +
       '<dl class="sum">' +
         "<div><dt>Subtotal</dt><dd>" + fmt(o.totals.subtotal) + "</dd></div>" +
-        "<div><dt>Shipping</dt><dd>" + (o.totals.shipping ? fmt(o.totals.shipping) : "Free") + "</dd></div>" +
-        '<div class="sum-total"><dt>Total</dt><dd>' + fmt(o.totals.total) + "</dd></div>" +
+        (o.totals.savings > 0 ? '<div class="save"><dt>Subscription savings (included)</dt><dd>−' + fmt(o.totals.savings) + "</dd></div>" : "") +
+        '<div class="sum-total"><dt>Total before shipping</dt><dd>' + fmt(o.totals.total - o.totals.shipping) + "</dd></div>" +
       "</dl>" +
-      '<div class="ticket-ship"><div><h2>Shipping to</h2><p>' + esc(o.first + " " + o.last) + "<br>" + esc(o.address) + "<br>" + esc(o.city + ", " + o.state + " " + o.zip) + "</p></div>" +
-        "<div><h2>Delivery</h2><p>" + esc(shipLabel) + "</p></div></div>" +
       '<p class="ticket-thanks">Thanks for holding the plastic.</p>' +
       '<a class="btn btn-red" href="#home">Back to the counter</a>';
   }
@@ -525,24 +466,11 @@
     if (rm) { cart[+rm.getAttribute("data-remove")].qty = 0; commit(); renderCart(); }
   });
 
-  document.addEventListener("change", function (e) {
-    if (e.target.name === "ship") $("#checkout-summary").innerHTML = summaryHTML(cart, totals(shipMethod()));
-  });
-
-  // input formatting for card fields
   document.addEventListener("input", function (e) {
-    var t = e.target;
-    if (t.id === "cc-number") t.value = t.value.replace(/\D/g, "").slice(0, 19).replace(/(\d{4})(?=\d)/g, "$1 ");
-    if (t.id === "cc-exp") {
-      var d = t.value.replace(/\D/g, "").slice(0, 4);
-      t.value = d.length > 2 ? d.slice(0, 2) + "/" + d.slice(2) : d;
-    }
-    if (t.id === "cc-cvc") t.value = t.value.replace(/\D/g, "").slice(0, 4);
-    if (t.hasAttribute("aria-invalid")) t.removeAttribute("aria-invalid");
+    if (e.target.hasAttribute("aria-invalid")) e.target.removeAttribute("aria-invalid");
   });
 
   // ---------- init ----------
-  $("#state").insertAdjacentHTML("beforeend", STATES.map(function (s) { return '<option value="' + s + '">' + s + "</option>"; }).join(""));
   $("#checkout-form").addEventListener("submit", placeOrder);
   applyBrand();
   renderLineups();
